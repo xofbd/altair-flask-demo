@@ -27,8 +27,8 @@ If you are using Windows, you can:
 
 Alternatively, you can deploy using [Docker](https://www.docker.com/).
 
-1. `docker build -t weather_app .`
-1. `docker run -d -p 5000:5000 weather_app`
+1. `docker build -t flask_app .`
+1. `docker run -d -p 5000:5000 flask_app`
 
 ## Deploying to Heroku
 
