@@ -1,6 +1,6 @@
-# Weather Greeting Application
+# Altair Flask Demo
 
-This project demonstrates how to use serve an Altair visualization using Flask.
+This project demonstrates how to serve an Altair visualization using Flask. The application shows potential sites to implement a geothermal energy technology. The user specifies the criteria for the wells and a plot is generated showing the location of those wells.
 
 ## Prerequisites
 
@@ -21,7 +21,7 @@ If you are using Windows, you can:
         py -3 -m venv venv
         venv\Scripts\activate.bat
 
-1. `set FLASK_APP=weather_app/app.py` in the command line.
+1. `set FLASK_APP=flask_app\app.py` in the command line.
 1. run `python -m flask run`.
 1. open the link in the command line.
 
