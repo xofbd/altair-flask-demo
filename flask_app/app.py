@@ -1,8 +1,10 @@
 from flask import Flask, render_template, request
 
-from plot import plot_wells, query_db
+from database import query_db
+from plot import plot_wells
 
 app = Flask(__name__)
+
 
 @app.route('/')
 def root():
@@ -16,7 +18,7 @@ def plot():
 
     data = query_db(depth_min, grad_min)
     chart_json = plot_wells(data)
-    
+
     return render_template('plot.html', chart=chart_json)
 
 

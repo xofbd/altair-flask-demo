@@ -1,25 +1,6 @@
-import os
-import sqlite3
-
 import altair as alt
 import pandas as pd
 from vega_datasets import data
-
-
-def query_db(depth_min, grad_min):
-    """Return well data given minimum depth and gradient."""
-    conn = sqlite3.connect(os.path.join('data', 'wells.db'))
-    cursor = conn.cursor()
-
-    query = """
-    SELECT latitude, longitude, depth, gradient
-    FROM wells
-    WHERE depth > ? and gradient > ?
-    """
-    data = cursor.execute(query, (depth_min, grad_min)).fetchall()
-    conn.close()
-
-    return data
 
 
 def plot_wells(well_coords):
