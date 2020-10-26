@@ -9,20 +9,22 @@ from vega_datasets import data
 def query_db(depth_min, grad_min):
     """Return well data given minimum depth and gradient."""
     conn = sqlite3.connect(os.path.join('data', 'wells.db'))
-
-    query = f"""
-    SELECT latitude, longitude, depth, gradient
-    FROM wells
-    WHERE depth > {depth_min} and gradient > {grad_min}
-    """
     cursor = conn.cursor()
 
-    return cursor.execute(query).fetchall()
+    query = """
+    SELECT latitude, longitude, depth, gradient
+    FROM wells
+    WHERE depth > ? and gradient > ?
+    """
+    data = cursor.execute(query, (depth_min, grad_min)).fetchall()
+    conn.close()
+
+    return data
 
 
 def plot_wells(well_coords):
     """Return JSON of Altair chart."""
-    
+
     # Process data
     counties = alt.topo_feature(data.us_10m.url, 'counties')
     columns = ['latitude', 'longitude', 'depth', 'gradient']
@@ -30,7 +32,7 @@ def plot_wells(well_coords):
 
     # Create charts
     selection = alt.selection_interval(bind='scales')
-    
+
     map_ = (alt.Chart(counties)
             .mark_geoshape(fill='lightgray', stroke='white')
             .properties(width=500, height=500)
