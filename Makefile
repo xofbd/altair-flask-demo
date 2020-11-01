@@ -1,8 +1,8 @@
 SHELL:=/bin/bash
 
-.PHONY: all deploy remove_venv
+.PHONY: all clean deploy
 
-all: venv deploy
+all: clean venv deploy
 
 venv: requirements.txt
 	test -d venv || python3 -m venv venv
@@ -12,5 +12,6 @@ venv: requirements.txt
 deploy: venv
 	source venv/bin/activate && bin/run_app
 
-remove_venv:
+clean:
 	rm -rf venv
+	find . | grep __pycache__ | xargs rm -rf
