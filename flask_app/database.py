@@ -1,35 +1,29 @@
 import os
-import sqlite3
 
-from flask import g
+from dotenv import load_dotenv
+from sqlalchemy import create_engine, text
 
-DATABASE = os.path.join('data', 'wells.db')
-
-
-def get_db():
-    """Return database connection object"""
-    try:
-        return g._database
-    except AttributeError:
-        g._database = sqlite3.connect(DATABASE)
-        return g._database
-
-
-def close_connection(exception):
-    """Close database connection."""
-    try:
-        g._database.close()
-    except AttributeError:
-        pass
+load_dotenv()
+URI_DB = os.getenv('URI_DB')
 
 
 def query_db(depth_min, grad_min):
-    """Return well data given minimum depth and gradient."""
-    cursor = get_db().cursor()
-    query = """
-    SELECT latitude, longitude, depth, gradient
-    FROM wells
-    WHERE depth > ? and gradient > ?
-    """
+    """Return wells that fit the search criteria."""
+    engine = create_engine(URI_DB)
 
-    return cursor.execute(query, (depth_min, grad_min)).fetchall()
+    query = text(
+        """
+        SELECT latitude, longitude, depth, gradient
+        FROM wells
+        WHERE depth > :depth_min and gradient > :grad_min
+        """
+    )
+
+    with engine.connect() as conn:
+        results = (
+            conn
+            .execute(query, depth_min=depth_min, grad_min=grad_min)
+            .fetchall()
+        )
+
+    return results
