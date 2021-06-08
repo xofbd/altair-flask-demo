@@ -1,0 +1,4 @@
+#!/bin/bash
+
+source .env
+heroku pg:reset $DB_HEROKU --confirm $APP_NAME
