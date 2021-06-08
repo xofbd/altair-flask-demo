@@ -1,9 +1,12 @@
 SHELL := /bin/bash
+WGET := wget -nc -P
 ACTIVATE_VENV := source venv/bin/activate
 
-.PHONY: all clean deploy
+csv := core.surface_site_county_state_materialized_view.zip
+url_data := http://geothermal.smu.edu/static/DatasetsZipped8072020/$(csv)
 
-all: clean venv deploy
+.PHONY: all
+all: clean create_db deploy
 
 venv: requirements.txt
 	test -d $@ || python3 -m venv $@
@@ -13,6 +16,18 @@ venv: requirements.txt
 .PHONY: deploy
 deploy: | venv
 	$(ACTIVATE_VENV) && bin/run_app
+
+data:
+	mkdir -p $@
+
+data/$(csv): | data
+	$(WGET) $| $(url_data)
+	touch $@
+
+.PHONY: create_db
+create_db: data/$(csv) | venv
+	bin/init_db
+	$(ACTIVATE_VENV) && bin/create_table.py $^
 
 .PHONY: clean
 clean:
