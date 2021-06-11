@@ -6,6 +6,8 @@ This project demonstrates how to serve an Altair visualization using Flask. The 
 
 All required Python packages can be found in the `requirements.txt` file. Additionally, the provided `Makefile` can be used to create a virtual environment by running `make venv`. You will also need a Heroku account, and to have installed the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli#download-and-install).
 
+Since the app uses a Postgres database to query data, you will need to associate one for your Heroku app. One solution is to use [Heroku Postgres](https://devcenter.heroku.com/articles/heroku-postgresql) which offers a free tier. The `bin` directory contains the necessary scripts to populate the database. Alternatively, you can run `make create_db`. You'll need to create a `.env` file with the necessary values defined. Take a look at `.env.template` as an example.
+
 ## Running the app locally using Flask
 
 You may want to run the app using Flask locally before deploying it to Heroku, especially if you have made any changes to the code. To run locally:
@@ -38,7 +40,7 @@ Make sure your app is ready to be deployed to Heroku by running Flask locally. T
 1. `heroku login` and enter your credentials.
 1. `heroku create` or `heroku create app-name` where app-name is a custom app name.
 1. `git push heroku master`.
-1. `heroku config:set DEPLOY=heroku`.
+1. `heroku config:set URI_DB=<your-db-URI>`.
 1. `heroku open` or open the app online through your Heroku profile.
 
 ## License
