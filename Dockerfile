@@ -1,5 +1,8 @@
 FROM python:3.8.6-slim
 COPY requirements.txt /tmp
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    gcc
 RUN pip install -r /tmp/requirements.txt
 COPY . /app
 WORKDIR /app
