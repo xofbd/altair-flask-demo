@@ -1,6 +1,8 @@
 SHELL := /bin/bash
 WGET := wget -nc -P
 ACTIVATE_VENV := source venv/bin/activate
+DOCKER_IMAGE := altair_demo
+DOCKER_CONTAINER := app
 
 csv := core.surface_site_county_state_materialized_view.zip
 url_data := http://geothermal.smu.edu/static/DatasetsZipped8072020/$(csv)
@@ -34,3 +36,12 @@ clean:
 	rm -rf venv
 	rm -rf data
 	find . | grep __pycache__ | xargs rm -rf
+
+.PHONY: deploy-docker
+deploy-docker: docker-rm
+	docker build -t $(DOCKER_IMAGE) .
+	docker run -d -p 5000:5000 --name $(DOCKER_CONTAINER) $(DOCKER_IMAGE)
+
+.PHONY: docker-rm
+docker-rm:
+	-docker rm -f $(DOCKER_CONTAINER)
