@@ -1,6 +1,7 @@
 SHELL := /bin/bash
 WGET := wget -nc -P
 ACTIVATE_VENV := source venv/bin/activate
+NUM_ROWS := 10000
 DOCKER_IMAGE := altair_demo
 DOCKER_CONTAINER := app
 
@@ -29,7 +30,7 @@ data/$(csv): | data
 .PHONY: create_db
 create_db: data/$(csv) | venv
 	bin/init_db
-	$(ACTIVATE_VENV) && bin/create_table.py $^
+	$(ACTIVATE_VENV) && bin/create_table.py --truncate $(NUM_ROWS) $^
 
 .PHONY: clean
 clean:
