@@ -20,7 +20,3 @@ def plot():
     chart_json = plot_wells(data)
 
     return render_template('plot.html', chart=chart_json)
-
-
-if __name__ == '__main__':
-    app.run()
