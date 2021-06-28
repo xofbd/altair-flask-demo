@@ -1,17 +1,15 @@
-<!doctype html>
-<html>
-  <head>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega@5"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega-lite@4.17.0"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega-embed@6"></script>
-  </head>
-    
-  <body>
-    <h1>Potential Well Sites</h1>
-      <div id='vis'></div>
-      <script>
-	var spec = {{ chart | safe }};
-        vegaEmbed("#vis", spec);
-      </script>
-  </body>
-</html>
+{% extends "base.html" %}
+{% block head %}
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega@5"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega-lite@4.17.0"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega-embed@6"></script>
+{% endblock %}
+
+{% block content %}
+<h1>Potential Well Sites</h1>
+  <div id='vis'></div>
+    <script>
+      var spec = {{ chart | safe }};
+      vegaEmbed("#vis", spec);
+    </script>
+{% endblock %}
