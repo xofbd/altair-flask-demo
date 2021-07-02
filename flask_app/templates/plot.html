@@ -6,10 +6,13 @@
 {% endblock %}
 
 {% block content %}
-<h1>Potential Well Sites</h1>
-  <div id='vis'></div>
+<div class="container">
+  <h2>Potential well sites</h2>
+  <div id="vis">
     <script>
       var spec = {{ chart | safe }};
       vegaEmbed("#vis", spec);
     </script>
+  </div>
+</div>
 {% endblock %}
