@@ -1,4 +1,32 @@
 #!/bin/bash
+#
+# Create either a local SQLite database or Heroku managed Postgres database if
+# it doesn't exist or clear/reset an existing one.
+
+check_db() {
+    echo "Checking if database already exists"
+    heroku addons --app $APP_NAME | grep -q heroku-postgresql
+}
+
+add_db() {
+    heroku addons:create --app $APP_NAME heroku-postgresql:hobby-dev
+
+    echo "Setting URI_DB in .env"
+    URI_DB=$(heroku config:get DATABASE_URL --app $APP_NAME | sed "s/postgres/postgresql/g")
+    sed -i "/^#/!s\URI_DB=.*\URI_DB=$URI_DB\g" .env
+    grep -q "URI_DB=$URI_DB" .env || \
+	echo "Could not replace URI_DB in .env." \
+	"You will need to manually set this value in your .env."
+
+    heroku config:set URI_DB=$URI_DB
+}
+
+reset_db() {
+    DB_HEROKU=$(heroku pg:info --app $APP_NAME | grep "postgresql.+")
+    heroku pg:reset $DB_HEROKU --confirm $APP_NAME
+}
 
 source .env
-heroku pg:reset $DB_HEROKU --confirm $APP_NAME
+
+
+(check_db && reset_db) || add_db
