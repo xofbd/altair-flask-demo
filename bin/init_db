@@ -28,5 +28,9 @@ reset_db() {
 
 source .env
 
+if [[ ${URI_DB::6} == "sqlite" ]]; then
+    rm -f data/wells.db
+    exit 0
+fi
 
 (check_db && reset_db) || add_db
