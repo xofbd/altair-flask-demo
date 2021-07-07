@@ -1,47 +1,45 @@
 # Altair Flask Demo
 
-This project demonstrates how to serve an Altair visualization using Flask. The application shows potential sites to implement a geothermal energy technology. The user specifies the criteria for the wells and a plot is generated showing the location of those wells.
+This project demonstrates how to serve an [Altair](https://altair-viz.github.io) visualization using [Flask](https://flask.palletsprojects.com). The application shows potential sites to implement a geothermal energy technology by re-purposing old wells. The user specifies the criteria for the wells and a plot is generated showing the location of those wells. One can deploy this app using a service like [Heroku](https://heroku.com) or just locally.
 
 ## Prerequisites
 
-All required Python packages can be found in the `requirements.txt` file. Additionally, the provided `Makefile` can be used to create a virtual environment by running `make venv`. You will also need a Heroku account, and to have installed the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli#download-and-install).
+### Python environment
+All required Python packages can be found in the `requirements.txt` file. Since the project makes use of GNU Make, there is no need to directly create the environment. The creation and activation of the environment is handled by running the Make rules that are shown in later sections.
 
-Since the app uses a Postgres database to query data, you will need to associate one for your Heroku app. One solution is to use [Heroku Postgres](https://devcenter.heroku.com/articles/heroku-postgresql) which offers a free tier. The `bin` directory contains the necessary scripts to populate the database. Alternatively, you can run `make create_db`. You'll need to create a `.env` file with the necessary values defined. Take a look at `.env.template` as an example.
+### SQL database
+The application uses an SQL database and makes queries against it to obtain the wells to visualize. Two options are presented: SQLite for only local deployment or PostgreSQL for either local or deployment to Heroku. Instructions for both are found below. Note, you can skip the last step of each and jump to deployment by running `make all`, as running `make all` takes care of creating the database once `.env` has been configured properly.
 
-## Running the app locally using Flask
+#### SQLite
+1. Create your own `.env`: `cp .env.template .env`.
+1. Assign `URI_DB` to `sqlite:///data/wells.db`.
+1. Run `make create_db`.
 
-You may want to run the app using Flask locally before deploying it to Heroku, especially if you have made any changes to the code. To run locally:
+#### Heroku managed PostgreSQL
+1. Create a [Heroku](https://heroku.com) account.
+1. Install the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli#download-and-install).
+1. Create your own `.env`: `cp .env.template .env`.
+1. Create a Heroku app: `heroku create`.
+1. In your `.env`, set `APP_NAME` to your application's name form the previous step/
+1. Run `make create_db`.
 
-1. clone the repository.
-1. in the repository, run `make deploy`.
-1. open the link provided in the command line.
+## Deployment
+Now that you have the SQL database has been created and `.env` configured properly, you are ready to deploy locally or to Heroku.
+To deploy the app locally, simply run  `make deploy`. It will use whatever database is specified in `URI_DB` in `.env`.
 
-If you are using Windows, you can:
+To deploy the app to Heroku:
 
-1. create and activate the virtual environment.
-
-        py -3 -m venv venv
-        venv\Scripts\activate.bat
-
-1. `set FLASK_APP=flask_app\app.py` in the command line.
-1. run `python -m flask run`.
-1. open the link in the command line.
-
-Alternatively, you can deploy using [Docker](https://www.docker.com/).
-
-1. `docker build -t flask_app .`
-1. `docker run -d -p 5000:5000 flask_app`
-
-## Deploying to Heroku
-
-Make sure your app is ready to be deployed to Heroku by running Flask locally. To deploy to Heroku:
-
-1. clone the repository (if you haven't yet).
-1. `heroku login` and enter your credentials.
-1. `heroku create` or `heroku create app-name` where app-name is a custom app name.
 1. `git push heroku master`.
-1. `heroku config:set URI_DB=<your-db-URI>`.
-1. `heroku open` or open the app online through your Heroku profile.
+1. `heroku open`.
+
+## Deployment with Docker
+
+You can deploy and run the application locally using [Docker](https://www.docker.com/). After creating a database, you can run `make deploy-docker` or:
+
+1. `docker build -t flask_app .`.
+1. `docker run -d -p 5000:5000 flask_app`.
+
+As with other methods, you need to make sure you've created your database and properly configured your `.env.`
 
 ## License
 
