@@ -12,21 +12,27 @@ load_dotenv()
 URI = os.getenv('URI_DB')
 
 
-def truncate_data(path_in, truncate):
-    """Truncate data for SQL table due to Heroku hobby tier."""
+def prepare_data(path_in, truncate):
+    """Wrangle and optionally truncate the data for SQL table."""
     T_surface = 20
+    cols_to_drop = [
+        'uuid', 'name', 'site_name', 'other_location_name', 'api', 'shape',
+        'precision_log_source_id'
+    ]
 
     df = (
-        pd.read_csv(path_in)
+        pd.read_csv(path_in, dtype={'state_id': 'Int32', 'county_id': 'Int32'})
         .assign(gradient=lambda df: (df['bht'] - T_surface) / df['depth'])
         .dropna(subset=['bht', 'thermal_conductivity'], axis=0)
         .drop_duplicates(subset=['id'])
+        .set_index('id')
+        .drop(cols_to_drop, axis=1)
     )
 
-    if truncate is None:
-        return df
-    else:
+    if truncate:
         return df.sample(truncate, random_state=0)
+    else:
+        return df
 
 
 def create_table(df):
@@ -37,7 +43,7 @@ def create_table(df):
 
 
 def main(path_in, truncate):
-    df = truncate_data(path_in, truncate)
+    df = prepare_data(path_in, truncate)
     create_table(df)
 
 
