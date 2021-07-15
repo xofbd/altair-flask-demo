@@ -29,22 +29,45 @@ def prepare_data(path_in, truncate):
         .drop(cols_to_drop, axis=1)
     )
 
+    df_county, df_state, df_wells = normalize_data_frame(df)
+
     if truncate:
-        return df.sample(truncate, random_state=0)
-    else:
-        return df
+        rows_to_keep = truncate - df_county.shape[0] - df_state.shape[0]
+        df_wells = df_wells.sample(rows_to_keep, random_state=0)
+
+    return df_county, df_state, df_wells
 
 
-def create_table(df):
+def create_table(**kwargs):
     """Create SQL table from pandas data frame."""
     engine = create_engine(URI)
 
-    df.to_sql('wells', engine)
+    for name, df in kwargs.items():
+        df.to_sql(name, engine)
+
+
+def normalize_data_frame(df):
+    """Normalize the data frame by splitting the data across 3 tables."""
+    def _normalize(df, columns, col_index):
+        return (
+            df[columns]
+            .drop_duplicates()
+            .dropna()
+            .set_index(col_index)
+        )
+
+    df_county = _normalize(df, ['county_id', 'county'], 'county_id')
+    df_state = _normalize(df, ['state_id', 'state_code', 'state'], 'state_id')
+    df_wells = df.drop(['county', 'state', 'state_code'], axis=1)
+
+    return df_county, df_state, df_wells
 
 
 def main(path_in, truncate):
-    df = prepare_data(path_in, truncate)
-    create_table(df)
+    dfs = prepare_data(path_in, truncate)
+    names = ('counties', 'states', 'wells')
+
+    create_table(**dict(zip(names, dfs)))
 
 
 if __name__ == '__main__':
