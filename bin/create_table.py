@@ -12,7 +12,7 @@ load_dotenv()
 URI = os.getenv('URI_DB')
 
 
-def prepare_data(path_in, truncate):
+def prepare_data(path_in, max_rows):
     """Wrangle and optionally truncate the data for SQL table."""
     T_surface = 20
     cols_to_drop = [
@@ -31,8 +31,9 @@ def prepare_data(path_in, truncate):
 
     df_county, df_state, df_wells = normalize_data_frame(df)
 
-    if truncate:
-        rows_to_keep = truncate - df_county.shape[0] - df_state.shape[0]
+    # We should only drop rows of the wells table
+    if max_rows:
+        rows_to_keep = max_rows - df_county.shape[0] - df_state.shape[0]
         df_wells = df_wells.sample(rows_to_keep, random_state=0)
 
     return df_county, df_state, df_wells
@@ -63,8 +64,8 @@ def normalize_data_frame(df):
     return df_county, df_state, df_wells
 
 
-def main(path_in, truncate):
-    dfs = prepare_data(path_in, truncate)
+def main(path_in, max_rows):
+    dfs = prepare_data(path_in, max_rows)
     names = ('counties', 'states', 'wells')
 
     create_table(**dict(zip(names, dfs)))
@@ -76,9 +77,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser("Create SQL database from a CSV file")
     parser.add_argument('path_in', help="Path to the CSV file")
     parser.add_argument(
-        '--truncate',
+        '--max_rows',
         type=int,
-        help="If truncating, how many rows to keep in the table"
+        help="If truncating, maximum number of rows to have across all tables "
     )
     args = parser.parse_args()
-    main(args.path_in, args.truncate)
+    main(args.path_in, args.max_rows)
