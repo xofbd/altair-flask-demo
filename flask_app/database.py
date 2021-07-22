@@ -15,7 +15,7 @@ def query_db(depth_min, grad_min):
         """
         SELECT latitude, longitude, depth, gradient
         FROM wells
-        WHERE depth > :depth_min and gradient > :grad_min
+        WHERE depth > :depth_min AND gradient > :grad_min;
         """
     )
 
