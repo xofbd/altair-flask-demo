@@ -9,7 +9,7 @@ csv := core.surface_site_county_state_materialized_view.zip
 url_data := http://geothermal.smu.edu/static/DatasetsZipped8072020/$(csv)
 
 .PHONY: all
-all: clean create_db deploy
+all: clean create-db deploy
 
 venv: requirements.txt
 	test -d $@ || python3 -m venv $@
@@ -27,8 +27,8 @@ data/$(csv): | data
 	$(WGET) $| $(url_data)
 	touch $@
 
-.PHONY: create_db
-create_db: data/$(csv) | venv
+.PHONY: create-db
+create-db: data/$(csv) | venv
 	bin/init_db
 	$(ACTIVATE_VENV) && bin/create_table.py $(TRUNCATE) $^
 

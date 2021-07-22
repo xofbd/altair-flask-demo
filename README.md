@@ -8,12 +8,12 @@ This project demonstrates how to serve an [Altair](https://altair-viz.github.io)
 All required Python packages can be found in the `requirements.txt` file. Since the project makes use of GNU Make, there is no need to directly create the environment. The creation and activation of the environment is handled by running the Make rules that are shown in later sections.
 
 ### SQL database
-The application uses an SQL database and makes queries against it to obtain the wells to visualize. Two options are presented: SQLite for only local deployment or PostgreSQL for either local or deployment to Heroku. Instructions for both are found below. Note, you can skip the last step of each and jump to deployment by running `make all`, as running `make all` takes care of creating the database once `.env` has been configured properly. By default, `create_db` truncates the records in the database to comply with Heroku's free tier limit. However, you can prevent truncation by setting the environmental variable `TRUNCATE` to an empty string. E.g., `make TRUNCATE="" all`.
+The application uses an SQL database and makes queries against it to obtain the wells to visualize. Two options are presented: SQLite for only local deployment or PostgreSQL for either local or deployment to Heroku. Instructions for both are found below. Note, you can skip the last step of each and jump to deployment by running `make all`, as running `make all` takes care of creating the database once `.env` has been configured properly. By default, `create-db` truncates the records in the database to comply with Heroku's free tier limit. However, you can prevent truncation by setting the environmental variable `TRUNCATE` to an empty string. E.g., `make TRUNCATE="" all`.
 
 #### SQLite
 1. Create your own `.env`: `cp .env.template .env`
 1. Assign `URI_DB` to `sqlite:///data/wells.db`
-1. Run `make create_db` or `make TRUNCATE="" create_db` (no truncation)
+1. Run `make create-db` or `make TRUNCATE="" create-db` (no truncation)
 
 #### Heroku managed PostgreSQL
 1. Create a [Heroku](https://heroku.com) account
@@ -21,7 +21,7 @@ The application uses an SQL database and makes queries against it to obtain the 
 1. Create your own `.env`: `cp .env.template .env`
 1. Create a Heroku app: `heroku create`
 1. In your `.env`, set `APP_NAME` to your application's name form the previous step
-1. Run `make create_db`
+1. Run `make create-db`
 
 ## Deployment
 Now that you have the SQL database has been created and `.env` configured properly, you are ready to deploy locally or to Heroku.
