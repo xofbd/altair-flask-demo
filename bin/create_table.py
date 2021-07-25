@@ -6,7 +6,7 @@ import os
 
 from dotenv import load_dotenv
 import pandas as pd
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 
 load_dotenv()
 URI = os.getenv('URI_DB')
@@ -40,11 +40,17 @@ def prepare_data(path_in, max_rows):
 
 
 def create_table(**kwargs):
-    """Create SQL table from pandas data frame."""
+    """Create SQL tables from pandas data frame."""
     engine = create_engine(URI)
 
     for name, df in kwargs.items():
-        df.to_sql(name, engine)
+        df.to_sql(name, engine, if_exists='replace')
+
+    # Since we'll query primarily based on depth and gradient, it makes
+    # sense to create indices for these columns.
+    with engine.connect() as conn:
+        conn.execute(text("CREATE INDEX ix_depth ON wells(depth);"))
+        conn.execute(text("CREATE INDEX ix_gradient ON wells(gradient);"))
 
 
 def normalize_data_frame(df):
