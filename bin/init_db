@@ -1,7 +1,9 @@
 #!/bin/bash
 #
-# Create either a local SQLite database or Heroku managed Postgres database if
-# it doesn't exist or clear/reset an existing one.
+# Create a Heroku managed Postgres database if it doesn't exit or clear/reset
+# an existing one. If URI_DB is an SQLite database, remove the file if it
+# exists. If you are not using either SQLite or Heroku managed Postgres
+# database, make sure to either unset APP_NAME or set OTHER_DB to true.
 
 check_db() {
     echo "Checking if database already exists"
@@ -30,7 +32,8 @@ source .env
 
 if [[ ${URI_DB::6} == "sqlite" ]]; then
     rm -f data/wells.db
-    exit 0
+elif [[ -z $APP_NAME || $OTHER_DB == true ]]; then
+    echo "Not using SQLite or Heroku managed Postgres database"
+else
+    (check_db && reset_db) || add_db
 fi
-
-(check_db && reset_db) || add_db
