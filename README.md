@@ -24,15 +24,13 @@ The application uses an SQL database and makes queries against it to obtain the 
 1. Run `make create-db`
 
 ### Other databases
-You can use a database that is not managed by Heroku. For example, your own Postgres server you have setup yourself or a fully managed one by a different provider. If you want to go the latter route, consider [ElephantSQL](https://www.elephantsql.com). The free tier lets you have a database up to 20 MB. Whatever you decide, the instructions are similiar, run `make create-db`. However, before you run `make create-db`, make sure you either
-
-* Comment out the `APP_NAME` line in your `.env` and run `unset APP_NAME`, or
-* Add `export OTHER_DB=true` to your `.env`
+You can use a database that is not managed by Heroku. For example, your own Postgres server you have setup yourself or a fully managed one by a different provider. If you want to go the latter route, consider [ElephantSQL](https://www.elephantsql.com). The free tier lets you have a database up to 20 MB. Whatever you decide, the instructions are similiar, run `make create-db`. However, before you run `make create-db`, make sure you add `export OTHER_DB=true` to your `.env`.
 
 Two things to consider:
 
-1. If you are deploying to Heroku, make sure you set `URI_DB` in Heroku (and not just locally)
-1. If you are using a different RDBMS, e.g., MySQL, you'll need to make sure you have the appropriate Python driver installed in your virtual environment
+1. If you are deploying to Heroku, make sure you set `APP_NAME` as `make create-db` will set the `URI_DB` environmental variable on Heroku. If you don't set `APP_NAME`, you will need to make sure you set `URI_DB` on Heroku yourself.
+
+1. If you are using a different RDBMS, e.g., MySQL, you'll need to make sure you have the appropriate Python driver installed in your virtual environment.
 
 ## Deployment
 Now that you have the SQL database has been created and `.env` configured properly, you are ready to deploy locally or to Heroku.

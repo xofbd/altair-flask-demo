@@ -28,12 +28,21 @@ reset_db() {
     heroku pg:reset $DB_HEROKU --confirm $APP_NAME
 }
 
+set_config() {
+    if [[ -n $APP_NAME ]]; then
+	echo "Setting URI_DB environmental variable on Heroku"
+	URI_DB=$(echo $URI_DB | sed "s/postgres:/postgresql:/g")
+	heroku --app $APP_NAME config:set URI_DB=$URI_DB
+    fi
+}
+
 source .env
 
 if [[ ${URI_DB::6} == "sqlite" ]]; then
     rm -f data/wells.db
-elif [[ -z $APP_NAME || $OTHER_DB == true ]]; then
+elif [[ $OTHER_DB == true ]]; then
     echo "Not using SQLite or Heroku managed Postgres database"
+    set_config
 else
     (check_db && reset_db) || add_db
 fi
