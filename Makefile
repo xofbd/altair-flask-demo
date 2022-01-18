@@ -1,6 +1,7 @@
 SHELL := /bin/bash
 WGET := wget -nc -P
-ACTIVATE_VENV := source venv/bin/activate
+VENV := venv
+ACTIVATE_VENV := source $(VENV)/bin/activate
 TRUNCATE ?= --max_rows 10000
 
 csv := core.surface_site_county_state_materialized_view.zip
@@ -11,13 +12,14 @@ docker_container := app
 .PHONY: all
 all: clean create-db deploy
 
-venv: requirements.txt
-	test -d $@ || python3 -m venv $@
-	$(ACTIVATE_VENV) && pip install -r $^
+$(VENV): requirements.txt
+	rm -rf $@
+	python3 -m venv $@
+	$(ACTIVATE_VENV) && pip install -r $<
 	touch $@
 
 .PHONY: deploy
-deploy: | venv
+deploy: | $(VENV)
 	$(ACTIVATE_VENV) && bin/run_app
 
 data:
@@ -28,13 +30,13 @@ data/$(csv): | data
 	touch $@
 
 .PHONY: create-db
-create-db: data/$(csv) | venv
+create-db: data/$(csv) | $(VENV)
 	bin/init_db
 	$(ACTIVATE_VENV) && bin/create_table.py $(TRUNCATE) $^
 
 .PHONY: clean
 clean:
-	rm -rf venv
+	rm -rf $(VENV)
 	rm -rf data
 	find . | grep __pycache__ | xargs rm -rf
 
