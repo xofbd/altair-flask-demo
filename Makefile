@@ -2,11 +2,11 @@ SHELL := /bin/bash
 WGET := wget -nc -P
 ACTIVATE_VENV := source venv/bin/activate
 TRUNCATE ?= --max_rows 10000
-DOCKER_IMAGE := altair_demo
-DOCKER_CONTAINER := app
 
 csv := core.surface_site_county_state_materialized_view.zip
 url_data := http://geothermal.smu.edu/static/DatasetsZipped8072020/$(csv)
+docker_image := altair_demo
+docker_container := app
 
 .PHONY: all
 all: clean create-db deploy
@@ -38,11 +38,18 @@ clean:
 	rm -rf data
 	find . | grep __pycache__ | xargs rm -rf
 
-.PHONY: deploy-docker
-deploy-docker: docker-rm
-	docker build -t $(DOCKER_IMAGE) .
-	docker run -d -p 5000:5000 --name $(DOCKER_CONTAINER) $(DOCKER_IMAGE)
+.PHONY: docker-image
+docker-image:
+	docker build -t $(docker_image) .
 
-.PHONY: docker-rm
-docker-rm:
-	-docker rm -f $(DOCKER_CONTAINER)
+.PHONY: docker-run
+docker-run: docker-image
+	docker run --rm -d --name $(docker_container) $(docker_image)
+
+.PHONY: docker-stop
+docker-stop:
+	docker container stop $(docker_container)
+
+.PHONY: docker-shell
+docker-shell:
+	docker exec -it $(docker_container) bash
