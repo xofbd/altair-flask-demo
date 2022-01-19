@@ -12,13 +12,23 @@ docker_container := app
 all: clean create-db deploy
 
 # Virtual environments
-.make.install: poetry.lock
+.make.install.prod: poetry.lock
+	poetry install --no-dev
+	rm -f .make.install.*
+	touch $@
+
+.make.install.dev: poetry.lock
 	poetry install
+	rm -f .make.install.*
 	touch $@
 
 .PHONY: install
-install: .make.install
+install: .make.install.prod
 
+.PHONY: install-dev
+install-dev: .make.install.dev
+
+# Package managements
 poetry.lock: pyproject.toml
 	poetry lock
 	touch $@
@@ -40,9 +50,18 @@ data/$(csv): | data
 	touch $@
 
 .PHONY: create-db
-create-db: data/$(csv) | .make.install
+create-db: data/$(csv) | .make.install.prod
 	bin/init_db
 	$(POETRY_RUN) bin/create_table.py $(TRUNCATE) $^
+
+# Testing
+tests: test-lint test-unit
+
+test-lint: | .make.install.dev
+	$(POETRY_RUN) flake8 app
+
+test-unit: | .make.install.dev
+	$(POETRY_RUN) pytest -s
 
 # Docker
 .PHONY: docker-image
@@ -64,6 +83,7 @@ docker-shell:
 # Utility
 .PHONY: clean
 clean:
+	rm -f .make.*
 	rm -rf data
 	poetry env remove $$(poetry env list | grep -oP "^\S+")
 	find . | grep __pycache__ | xargs rm -rf

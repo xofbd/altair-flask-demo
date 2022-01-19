@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request
 
-from database import query_db
-from plot import plot_wells
+from app.database import query_db
+from app.plot import plot_wells
 
 app = Flask(__name__)
 
