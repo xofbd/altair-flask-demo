@@ -1,7 +1,6 @@
 SHELL := /bin/bash
 WGET := wget -nc -P
-VENV := venv
-ACTIVATE_VENV := source $(VENV)/bin/activate
+POETRY_RUN := poetry run
 TRUNCATE ?= --max_rows 10000
 
 csv := core.surface_site_county_state_materialized_view.zip
@@ -12,16 +11,27 @@ docker_container := app
 .PHONY: all
 all: clean create-db deploy
 
-$(VENV): requirements.txt
-	rm -rf $@
-	python3 -m venv $@
-	$(ACTIVATE_VENV) && pip install -r $<
+# Virtual environments
+.make.install: poetry.lock
+	poetry install
 	touch $@
 
-.PHONY: deploy
-deploy: | $(VENV)
-	$(ACTIVATE_VENV) && bin/run_app
+.PHONY: install
+install: .make.install
 
+poetry.lock: pyproject.toml
+	poetry lock
+	touch $@
+
+requirements.txt: poetry.lock
+	poetry export --without-hashes -f requirements.txt -o $@
+
+# Deployment
+.PHONY: deploy
+deploy: | .make.install
+	$(POETRY_RUN) bin/run_app
+
+# Database
 data:
 	mkdir -p $@
 
@@ -30,16 +40,11 @@ data/$(csv): | data
 	touch $@
 
 .PHONY: create-db
-create-db: data/$(csv) | $(VENV)
+create-db: data/$(csv) | .make.install
 	bin/init_db
-	$(ACTIVATE_VENV) && bin/create_table.py $(TRUNCATE) $^
+	$(POETRY_RUN) bin/create_table.py $(TRUNCATE) $^
 
-.PHONY: clean
-clean:
-	rm -rf $(VENV)
-	rm -rf data
-	find . | grep __pycache__ | xargs rm -rf
-
+# Docker
 .PHONY: docker-image
 docker-image:
 	docker build -t $(docker_image) .
@@ -55,3 +60,10 @@ docker-stop:
 .PHONY: docker-shell
 docker-shell:
 	docker exec -it $(docker_container) bash
+
+# Utility
+.PHONY: clean
+clean:
+	rm -rf data
+	poetry env remove $$(poetry env list | grep -oP "^\S+")
+	find . | grep __pycache__ | xargs rm -rf

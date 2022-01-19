@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "altair-flask-demo"
+version = "0.1.0"
+description = "Demo project using Altair with Flask"
+authors = ["xofbd <dfox09@gmail.com>"]
+license = "GNU GPL v3.0"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+altair = "4.1.0"
+flask = "1.1.2"
+gunicorn = "20.0.4"
+pandas = "1.2.4"
+psycopg2 = "2.8.6"
+python-dotenv = "0.17.1"
+sqlalchemy = "1.4.11"
+vega_datasets = "0.8.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
