@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+import pytest
 
 
 def create_soup(response):
@@ -12,7 +13,6 @@ def test_index(test_client):
     WHEN it makes a GET request to the index page
     THEN the index page is returned with the form
     """
-
     response = test_client.get('/')
     soup = create_soup(response)
 
@@ -24,13 +24,35 @@ def test_index(test_client):
 def test_plot(test_client, form_data):
     """
     GIVEN a test client
-    WHEN it makes a POST request to the plot page
+    WHEN it makes a POST request to /plot
     THEN the plot page is returned with the visualization
     """
-
     response = test_client.post('/plot', data=form_data)
     soup = create_soup(response)
 
     assert response.status_code
     assert 'Potential well sites' == soup.select_one('h2').text
     assert soup.select_one('div#vis > script')
+
+
+@pytest.mark.parametrize(
+    'form_data_invalid, error_message',
+    [
+        ({'depth_min': -1, 'grad_min': 0.05}, 'Number must be at least 0.'),
+        ({'depth_min': '', 'grad_min': 0.05}, 'This field is required.'),
+        ({'depth_min': 500, 'grad_min': -1}, 'Number must be at least 0.'),
+        ({'depth_min': 500, 'grad_min': ''}, 'This field is required.'),
+    ]
+)
+def test_invalid_input(test_client, form_data_invalid, error_message):
+    """
+    GIVEN a test client
+    WHEN it makes a POST request to / with invalid data
+    THEN the index page is reloaded with invalid feedback message
+    """
+    response = test_client.post('/', data=form_data_invalid)
+    soup = create_soup(response)
+
+    assert response.status_code == 200
+    assert soup.select_one('h2').text == 'Enter the well criteria'
+    assert soup.select_one('.invalid-feedback').text.strip() == error_message
