@@ -3,23 +3,29 @@ import pandas as pd
 from vega_datasets import data
 
 
-def plot_wells(well_coords):
-    """Return JSON of Altair chart."""
-
-    # Process data
-    counties = alt.topo_feature(data.us_10m.url, 'counties')
+def process_data(well_coords):
+    """Return pandas DataFrame of queried well data"""
     columns = ['latitude', 'longitude', 'depth', 'gradient']
-    well_coords = pd.DataFrame(well_coords, columns=columns)
 
-    # Create charts
-    map_ = (
+    return pd.DataFrame(well_coords, columns=columns)
+
+
+def plot_map():
+    """Return Altair Chart of map of the USA"""
+    counties = alt.topo_feature(data.us_10m.url, 'counties')
+
+    return (
         alt.Chart(counties)
         .mark_geoshape(fill='lightgray', stroke='white')
         .properties(width=500, height=500)
         .project('albersUsa')
     )
 
-    well_locations = (
+
+def plot_locations(well_coords):
+    """Return Altair Chart of queried well locations"""
+
+    return (
         alt.Chart(well_coords)
         .mark_circle()
         .encode(
@@ -37,6 +43,11 @@ def plot_wells(well_coords):
         )
     )
 
-    chart = map_ + well_locations
 
-    return chart.to_json()
+def plot_wells(well_coords):
+    """Return Vega-Lite JSON of map of USA with queried wells"""
+    well_coords = process_data(well_coords)
+    map_ = plot_map()
+    well_locations = plot_locations(well_coords)
+
+    return (map_ + well_locations).to_json()
