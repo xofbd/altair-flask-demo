@@ -21,15 +21,16 @@ def test_index(test_client):
     assert soup.select_one('form')
 
 
-def test_plot(test_client, form_data):
+def test_plot(test_client, form_data, mock_query_db):
     """
-    GIVEN a test client
+    GIVEN a test client and a mocked query_db function
     WHEN it makes a POST request to /plot
     THEN the plot page is returned with the visualization
     """
     response = test_client.post('/plot', data=form_data)
     soup = create_soup(response)
 
+    mock_query_db.assert_called_once()
     assert response.status_code
     assert 'Potential well sites' == soup.select_one('h2').text
     assert soup.select_one('div#vis > script')

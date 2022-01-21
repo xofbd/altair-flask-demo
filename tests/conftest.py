@@ -1,3 +1,5 @@
+from unittest.mock import Mock, patch
+
 import pandas as pd
 import pytest
 
@@ -31,3 +33,11 @@ def well_coords_df():
         'depth': [1464.9, 2525.0],
         'gradient': [0.16519898969212915, 0.12792079207920792],
     })
+
+
+@pytest.fixture
+def mock_query_db(well_coords):
+    with patch('app.app.query_db') as mock:
+        mock.return_value = well_coords
+
+        yield mock
