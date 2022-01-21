@@ -61,7 +61,7 @@ test-lint: | .make.install.dev
 	$(POETRY_RUN) flake8 app
 
 test-unit: | .make.install.dev
-	$(POETRY_RUN) pytest -s
+	$(POETRY_RUN) pytest --cov=app -s
 
 # Docker
 .PHONY: docker-image
