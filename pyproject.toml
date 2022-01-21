@@ -8,7 +8,7 @@ license = "GNU GPL v3.0"
 [tool.poetry.dependencies]
 python = "^3.8"
 altair = "4.1.0"
-flask = "1.1.2"
+flask = "2.0.0"
 gunicorn = "20.0.4"
 pandas = "1.2.4"
 psycopg2 = "2.8.6"
