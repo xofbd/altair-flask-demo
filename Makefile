@@ -58,7 +58,7 @@ create-db: data/$(csv) | .make.install.prod
 tests: test-lint test-unit
 
 test-lint: | .make.install.dev
-	$(POETRY_RUN) flake8 app
+	$(POETRY_RUN) flake8 app tests
 
 test-unit: | .make.install.dev
 	$(POETRY_RUN) pytest --cov=app -s
