@@ -1,3 +1,6 @@
+![Python](https://shields.io/badge/Python-3.9-blue)
+[![License: GPL-3.0](https://img.shields.io/github/license/xofbd/altair-flask-demo)](https://opensource.org/licenses/GPL-3.0)
+![CI](https://github.com/xofbd/altair-flask-demo/workflows/CI/badge.svg?branch=master)
 # Altair Flask Demo
 
 This project demonstrates how to serve an [Altair](https://altair-viz.github.io) visualization using [Flask](https://flask.palletsprojects.com). The application shows potential sites to implement a geothermal energy technology by re-purposing old wells. The user specifies the criteria for the wells and a plot is generated showing the location of those wells. One can deploy this app using a service like [Heroku](https://heroku.com) or just locally.
