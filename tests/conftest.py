@@ -1,4 +1,4 @@
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 import pandas as pd
 import pytest
@@ -9,6 +9,8 @@ from app.app import app
 @pytest.fixture
 def test_client():
     with app.test_client() as test_client:
+        app.config['WTF_CSRF_ENABLED'] = False
+
         return test_client
 
 
