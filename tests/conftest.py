@@ -1,5 +1,6 @@
 from unittest.mock import patch
 
+from altair.utils.data import MaxRowsError
 import pandas as pd
 import pytest
 
@@ -41,5 +42,13 @@ def well_coords_df():
 def mock_query_db(well_coords):
     with patch('app.app.query_db') as mock:
         mock.return_value = well_coords
+
+        yield mock
+
+
+@pytest.fixture
+def mock_plot_wells(well_coords):
+    with patch('app.app.plot_wells') as mock:
+        mock.side_effect = MaxRowsError
 
         yield mock

@@ -1,6 +1,7 @@
 import os
 
-from flask import Flask, render_template
+from altair.utils.data import MaxRowsError
+from flask import flash, Flask, redirect, render_template, url_for
 
 from app.database import query_db
 from app.forms import PlotForm
@@ -16,7 +17,15 @@ def root():
 
     if form.validate_on_submit():
         data = query_db(form.depth_min.data, form.grad_min.data)
-        chart_json = plot_wells(data)
+        try:
+            chart_json = plot_wells(data)
+        except MaxRowsError:
+            flash(
+                'Query returned too many records to visualize. '
+                'Try a more restrictive query.'
+            )
+
+            return redirect(url_for('root'))
 
         return render_template('plot.html', chart=chart_json)
 

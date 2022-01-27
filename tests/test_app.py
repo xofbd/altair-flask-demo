@@ -57,3 +57,27 @@ def test_invalid_input(test_client, form_data_invalid, error_message):
     assert response.status_code == 200
     assert soup.select_one('h2').text == 'Enter the well criteria'
     assert soup.select_one('.invalid-feedback').text.strip() == error_message
+
+
+def test_max_rows(test_client, form_data, mock_query_db, mock_plot_wells):
+    """
+    GIVEN a test client, a mocked query_db and plot_wells functions
+    WHEN a POST request is made to / causing too many rows to be visualized
+    THEN:
+        1. the client is redirect back to /
+        2. a flash message is used to warn the user and to try again
+    """
+
+    response = test_client.post('/', data=form_data, follow_redirects=True)
+    soup = create_soup(response)
+    flash_text = soup.select_one('div.alert > ul > li').text
+
+    mock_query_db.assert_called_once()
+    mock_plot_wells.assert_called_once()
+
+    assert response.status_code == 200
+    assert flash_text == (
+        'Query returned too many records to visualize. '
+        'Try a more restrictive query.'
+    )
+    assert soup.select_one('h2').text == 'Enter the well criteria'

@@ -1,0 +1,30 @@
+{% macro render_field(field) %}
+{% if field.errors %}
+  {{ field.label }}
+  {{ field(class_="form-control is-invalid", **kwargs)|safe }}
+  <div class="invalid-feedback">
+    {% for error in field.errors %}
+      <div>
+	{{ error }}
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  {{ field.label }}
+  {{ field(class_="form-control", **kwargs)|safe }}
+{% endif %}
+{% endmacro %}
+
+{% macro render_flash() %}
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div class="alert alert-danger" role="alert">
+      <ul style="list-style-type:none;">
+	{% for message in messages %}
+	  <li>{{ message }}</li>
+	{% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+{% endwith %}
+{% endmacro %}
