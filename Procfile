@@ -1,1 +1,1 @@
-web: gunicorn app.app:app
+web: bin/run_app prod
