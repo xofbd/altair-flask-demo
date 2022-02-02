@@ -4,14 +4,14 @@ from altair.utils.data import MaxRowsError
 import pandas as pd
 import pytest
 
-from app.app import app
+from app import create_app
 
 
 @pytest.fixture
 def test_client():
-    with app.test_client() as test_client:
-        app.config['WTF_CSRF_ENABLED'] = False
+    app = create_app(config='testing')
 
+    with app.test_client() as test_client:
         return test_client
 
 
@@ -40,7 +40,7 @@ def well_coords_df():
 
 @pytest.fixture
 def mock_query_db(well_coords):
-    with patch('app.app.query_db') as mock:
+    with patch('app.views.query_db') as mock:
         mock.return_value = well_coords
 
         yield mock
@@ -48,7 +48,7 @@ def mock_query_db(well_coords):
 
 @pytest.fixture
 def mock_plot_wells(well_coords):
-    with patch('app.app.plot_wells') as mock:
+    with patch('app.views.plot_wells') as mock:
         mock.side_effect = MaxRowsError
 
         yield mock
