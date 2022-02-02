@@ -1,17 +1,14 @@
-import os
-
 from altair.utils.data import MaxRowsError
-from flask import flash, Flask, redirect, render_template, url_for
+from flask import Blueprint, flash, redirect, render_template, url_for
 
 from app.database import query_db
 from app.forms import PlotForm
 from app.plot import plot_wells
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = os.urandom(32)
+bp = Blueprint('views', __name__)
 
 
-@app.route('/', methods=['GET', 'POST'])
+@bp.route('/', methods=['GET', 'POST'])
 def root():
     form = PlotForm()
 
@@ -25,7 +22,7 @@ def root():
                 'Try a more restrictive query.'
             )
 
-            return redirect(url_for('root'))
+            return redirect(url_for('views.root'))
 
         return render_template('plot.html', chart=chart_json)
 
