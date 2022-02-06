@@ -5,6 +5,10 @@
 # exists. If you are not using either SQLite or Heroku managed Postgres
 # database, make sure to either unset APP_NAME or set OTHER_DB to true.
 
+set -eu
+
+source .env
+
 check_db() {
     echo "Checking if database already exists"
     heroku addons --app $APP_NAME | grep -q heroku-postgresql
@@ -36,13 +40,16 @@ set_config() {
     fi
 }
 
-source .env
+main() {
+    if [[ ${URI_DB::6} == "sqlite" ]]; then
+	rm -f data/wells.db
+    elif [[ $OTHER_DB == true ]]; then
+	echo "Not using SQLite or Heroku managed Postgres database"
+	set_config
+    else
+	(check_db && reset_db) || add_db
+    fi
+}
 
-if [[ ${URI_DB::6} == "sqlite" ]]; then
-    rm -f data/wells.db
-elif [[ $OTHER_DB == true ]]; then
-    echo "Not using SQLite or Heroku managed Postgres database"
-    set_config
-else
-    (check_db && reset_db) || add_db
-fi
+
+main
