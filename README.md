@@ -41,6 +41,7 @@ To deploy the app locally, simply run  `make deploy`. It will use whatever datab
 
 To deploy the app to Heroku:
 
+1. `bin/set_secret_key`
 1. `git push heroku master`
 1. `heroku open`
 
