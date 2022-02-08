@@ -1,16 +1,33 @@
-import os
-
-from dotenv import load_dotenv
+from flask import current_app as app, g
 from sqlalchemy import create_engine, text
 
-load_dotenv()
-URI_DB = os.getenv('URI_DB')
+
+def get_db():
+    """Return connection to the database"""
+    db = getattr(g, '_database', None)
+
+    if db is None:
+        engine = create_engine(app.config['URI_DB'])
+        g._database = engine.connect()
+
+    return g._database
 
 
-def query_db(depth_min, grad_min):
+def close_connection(exception):
+    """Close connection to the database"""
+    db = getattr(g, '_database', None)
+
+    if db is not None:
+        db.close()
+
+
+def init_app(app):
+    """Close any open connections of the application context"""
+    app.teardown_appcontext(close_connection)
+
+
+def query_db(conn, depth_min, grad_min):
     """Return wells that fit the search criteria."""
-    engine = create_engine(URI_DB)
-
     query = text(
         """
         SELECT latitude, longitude, depth, gradient
@@ -19,11 +36,8 @@ def query_db(depth_min, grad_min):
         """
     )
 
-    with engine.connect() as conn:
-        results = (
-            conn
-            .execute(query, depth_min=depth_min, grad_min=grad_min)
-            .fetchall()
-        )
-
-    return results
+    return (
+        conn
+        .execute(query, depth_min=depth_min, grad_min=grad_min)
+        .fetchall()
+    )

@@ -1,7 +1,7 @@
 from altair.utils.data import MaxRowsError
 from flask import Blueprint, flash, redirect, render_template, url_for
 
-from app.database import query_db
+from app.database import get_db, query_db
 from app.forms import PlotForm
 from app.plot import plot_wells
 
@@ -13,7 +13,7 @@ def root():
     form = PlotForm()
 
     if form.validate_on_submit():
-        data = query_db(form.depth_min.data, form.grad_min.data)
+        data = query_db(get_db(), form.depth_min.data, form.grad_min.data)
         try:
             chart_json = plot_wells(data)
         except MaxRowsError:
