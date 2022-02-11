@@ -73,7 +73,7 @@ docker-image:
 
 .PHONY: docker-run
 docker-run: docker-image
-	docker run --rm -d --name $(docker_container) $(docker_image)
+	docker run --init --rm -d --publish 127.0.0.1:5000:5000 --name $(docker_container) $(docker_image)
 
 .PHONY: docker-stop
 docker-stop:
