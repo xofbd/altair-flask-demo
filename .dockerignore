@@ -3,3 +3,4 @@
 !app/
 !bin/run_app
 !requirements.txt
+!config.py
