@@ -55,13 +55,16 @@ create-db: data/$(csv) | .make.install.prod
 	$(POETRY_RUN) bin/create_table.py $(TRUNCATE) $^
 
 # Testing
-tests: test-lint test-unit
+tests: test-lint test-unit test-docker
 
 test-lint: | .make.install.dev
 	$(POETRY_RUN) flake8 app tests
 
 test-unit: | .make.install.dev
 	$(POETRY_RUN) pytest --cov=app -s
+
+test-docker:
+	tests/test_docker
 
 # Docker
 .PHONY: docker-image

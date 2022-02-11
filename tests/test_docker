@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -eu
+
+test_docker() {
+    for i in {1..5}; do
+	sleep 2
+	hit_container && return 0
+    done
+
+    return 1
+}
+
+hit_container() {
+    curl -sS http://localhost:5000 > /dev/null && echo "Application is running in a Docker container!"    
+}
+
+main() {
+    make docker-stop &> /dev/null ||
+    make docker-run
+    test_docker
+    exit_status="$?"
+    make docker-stop > /dev/null
+
+    exit "$exit_status"
+}
+
+
+main
