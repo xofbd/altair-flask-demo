@@ -4,10 +4,10 @@ from sqlalchemy import create_engine, text
 
 def get_db():
     """Return connection to the database"""
-    db = getattr(g, '_database', None)
+    db = getattr(g, "_database", None)
 
     if db is None:
-        engine = create_engine(app.config['URI_DB'])
+        engine = create_engine(app.config["URI_DB"])
         g._database = engine.connect()
 
     return g._database
@@ -15,7 +15,7 @@ def get_db():
 
 def close_connection(exception):
     """Close connection to the database"""
-    db = getattr(g, '_database', None)
+    db = getattr(g, "_database", None)
 
     if db is not None:
         db.close()

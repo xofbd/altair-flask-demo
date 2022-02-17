@@ -5,20 +5,20 @@ from vega_datasets import data
 
 def process_data(well_coords):
     """Return pandas DataFrame of queried well data"""
-    columns = ['latitude', 'longitude', 'depth', 'gradient']
+    columns = ["latitude", "longitude", "depth", "gradient"]
 
     return pd.DataFrame(well_coords, columns=columns)
 
 
 def plot_map():
     """Return Altair Chart of map of the USA"""
-    counties = alt.topo_feature(data.us_10m.url, 'counties')
+    counties = alt.topo_feature(data.us_10m.url, "counties")
 
     return (
         alt.Chart(counties)
-        .mark_geoshape(fill='lightgray', stroke='white')
+        .mark_geoshape(fill="lightgray", stroke="white")
         .properties(width=500, height=500)
-        .project('albersUsa')
+        .project("albersUsa")
     )
 
 
@@ -29,15 +29,15 @@ def plot_locations(well_coords):
         alt.Chart(well_coords)
         .mark_circle()
         .encode(
-            longitude='longitude:Q',
-            latitude='latitude:Q',
-            color=alt.Color('gradient:Q', scale=alt.Scale(scheme='inferno')),
+            longitude="longitude:Q",
+            latitude="latitude:Q",
+            color=alt.Color("gradient:Q", scale=alt.Scale(scheme="inferno")),
             tooltip=[
-                alt.Tooltip('depth:Q', title='Depth (m)', format='d'),
+                alt.Tooltip("depth:Q", title="Depth (m)", format="d"),
                 alt.Tooltip(
-                    'gradient:Q',
-                    title='Gradient (°C/m)',
-                    format='0.2f'
+                    "gradient:Q",
+                    title="Gradient (°C/m)",
+                    format="0.2f"
                 ),
             ]
         )
