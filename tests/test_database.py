@@ -54,7 +54,7 @@ def test_get_db(app):
     with app.app_context():
         db = get_db()
 
-        assert db.execute('SELECT 1').fetchall() == [(1, )]
+        assert db.execute("SELECT 1").fetchall() == [(1,)]
 
 
 def test_single_connection(app):
@@ -78,6 +78,6 @@ def test_close_connection(connection):
     close_connection(Exception)
 
     with raises(ResourceClosedError) as e:
-        connection.execute('SELECT 1')
+        connection.execute("SELECT 1")
 
-    assert 'This connection is closed' != str(e.value)
+    assert "This connection is closed" != str(e.value)

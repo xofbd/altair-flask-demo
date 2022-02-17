@@ -6,7 +6,7 @@ from app.plot import plot_locations, plot_map, plot_wells, process_data
 def is_vega_lite_json(json_string):
     """Return True if JSON string is a Vega-Lite JSON specification"""
 
-    return 'vega-lite' in json.loads(json_string)['$schema']
+    return "vega-lite" in json.loads(json_string)["$schema"]
 
 
 def test_process_data(well_coords, well_coords_df):
@@ -48,4 +48,4 @@ def test_plot_wells(well_coords):
     THEN a Vega-Lite JSON is returned with two layers
     """
 
-    assert len(json.loads(plot_wells(well_coords))['layer']) == 2
+    assert len(json.loads(plot_wells(well_coords))["layer"]) == 2
