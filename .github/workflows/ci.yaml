@@ -50,3 +50,16 @@ jobs:
 
       - name: Run Flake8
         run: make test-lint
+
+  test-docker:
+    name: Testing Docker container
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run Docker container
+        run: make docker-run
+
+      - name: Test Docker container
+        run: docker container ls | grep -q "Up"
