@@ -47,12 +47,12 @@ To deploy the app to Heroku:
 
 ## Deployment with Docker
 
-You can deploy and run the application locally using [Docker](https://www.docker.com/). After creating a database, you can run `make deploy-docker` or:
+You can deploy and run the application locally using [Docker](https://www.docker.com/). After creating a database, you can run `make docker-run` or:
 
 1. `docker build -t flask_app .`
-1. `docker run -d -p 5000:5000 flask_app`
+1. `docker run --init --rm -d --publish 127.0.0.1:5000:5000 flask_app`
 
-As with other methods, you need to make sure you've created your database and properly configured your `.env.`
+Once running, visit `localhost:5000` on your web browser. As with other methods, you need to make sure you've created your database and properly configured your `.env.`
 
 ## License
 
