@@ -31,7 +31,7 @@ def test_plot(test_client, form_data, mock_query_db):
     soup = create_soup(response)
 
     mock_query_db.assert_called_once()
-    assert response.status_code
+    assert response.status_code == 200
     assert soup.select_one("h2").text == "Potential well sites"
     assert soup.select_one("div#vis > script")
 
