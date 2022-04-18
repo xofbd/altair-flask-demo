@@ -3,5 +3,6 @@
 .make.*
 .pytest_cache
 __pycache__
+coverage.xml
 /data
 /venv
