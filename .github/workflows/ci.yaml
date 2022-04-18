@@ -31,6 +31,11 @@ jobs:
       - name: Run unit testing
         run: make test-unit
 
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          fail_ci_if_error: true
+
   test-linting:
     name: Linting
     runs-on: ubuntu-20.04

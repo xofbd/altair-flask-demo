@@ -61,7 +61,7 @@ test-lint: | .make.install.dev
 	$(POETRY_RUN) flake8 app tests
 
 test-unit: | .make.install.dev
-	$(POETRY_RUN) pytest --cov=app -s
+	$(POETRY_RUN) pytest --cov=app --cov-report xml --cov-report term -s
 
 test-docker:
 	tests/test_docker
@@ -86,7 +86,7 @@ docker-shell:
 # Utility
 .PHONY: clean
 clean:
-	rm -f .make.*
+	rm -f .make.* coverage.xml
 	rm -rf data
 	poetry env remove $$(poetry env list | grep -oP "^\S+")
 	find . | grep __pycache__ | xargs rm -rf
