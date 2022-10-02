@@ -1,6 +1,6 @@
 *
 !.env
 !app/
-!bin/run_app
+!bin/run
 !requirements.txt
 !config.py

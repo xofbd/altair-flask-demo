@@ -39,7 +39,7 @@ requirements.txt: poetry.lock
 # Deployment
 .PHONY: deploy
 deploy: | .make.install.dev
-	$(POETRY_RUN) bin/run_app dev
+	$(POETRY_RUN) bin/run dev
 
 # Database
 data:

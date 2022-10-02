@@ -7,4 +7,4 @@ RUN pip install -r /tmp/requirements.txt
 COPY . /app
 WORKDIR /app
 EXPOSE 5000
-CMD ["bin/run_app", "-o", "0.0.0.0", "dev"]
+CMD ["bin/run", "-o", "0.0.0.0", "dev"]
