@@ -1,1 +1,1 @@
-web: bin/run_app prod
+web: bin/run prod
