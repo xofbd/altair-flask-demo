@@ -3,57 +3,51 @@
 set -eu
 
 usage() {
-    echo "Usage: $0 [-h] [-o HOST] CONFIG"
-    echo -e "Run Flask application in either development or production configuration\n"
-    echo "Required arguments:"
-    echo -e "CONFIG \t Configuration of the application, either dev or prod\n"
-    echo "Options:"
-    echo -e "-h \t Show this help message and exit"
-    echo -e "-o \t The interface to bind to, the host"
+  echo "Usage: $0 [-h] [-o HOST] {dev|prod}"
+  echo -e "Run Flask application in either development or production configuration\n"
+  echo "Options:"
+  echo -e "-h \t Show this help message and exit"
+  echo -e "-o \t The interface to bind to, the host"
 }
 
 parse_option() {
-    while getopts "o:h" option; do
-	case "$option" in
-	    o)
-	      HOST="$OPTARG";;
-	    h)
-		usage
-		exit 0;;
-	    \?)
-		usage 1>&2
-		exit 1;;
-	esac
-    done
-
-    shift "$(($OPTIND -1))"
-
-    HOST=${HOST:-127.0.0.1}
-    ARGS="$@"
-}
-
-parse_config() {
-    if [[ ("$1" == "dev") || ("$1" == "prod") ]]; then
-	CONFIG="$1"
-    else
-	echo "Illegal required positional argument: $1"
-	usage
+  while getopts "o:h" option; do
+    case "$option" in
+      o)
+        HOST="$OPTARG"
+	;;
+      h)
+        usage
+	exit 0
+	;;
+      \?)
+        usage 1>&2
 	exit 1
-    fi
-}
+	;;
+    esac
+  done
 
-run_app() {
-    if [[ "$CONFIG" == "dev" ]]; then
-	FLASK_ENV=development flask run --host "$HOST"
-    elif [[ "$CONFIG" == "prod" ]]; then
-	gunicorn "wsgi:create_app('prod')"
-    fi
+  shift "$(($OPTIND -1))"
+
+  HOST=${HOST:-127.0.0.1}
+  ARGS="$@"
 }
 
 main() {
-    parse_option "$@"
-    parse_config "$ARGS"
-    run_app
+  parse_option "$@"
+
+  case "$ARGS" in
+    dev)
+      FLASK_ENV=development flask run --host "$HOST"
+      ;;
+    prod)
+      gunicorn --bind "$HOST" "wsgi:create_app('prod')"
+      ;;
+    *)
+      usage 1>&2
+      exit 1
+      ;;
+  esac
 }
 
 
